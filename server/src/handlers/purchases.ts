@@ -1,70 +1,234 @@
+import { db } from '../db';
+import { purchasesTable, inventoryItemsTable, suppliersTable } from '../db/schema';
 import { type Purchase, type CreatePurchaseInput, type UpdatePurchaseInput } from '../schema';
+import { eq } from 'drizzle-orm';
 
 export async function getPurchases(): Promise<Purchase[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is to fetch all purchases from the database with item and supplier relations.
-    return [];
+  try {
+    const results = await db.select()
+      .from(purchasesTable)
+      .execute();
+
+    return results.map(purchase => ({
+      ...purchase,
+      unit_price: parseFloat(purchase.unit_price),
+      total_price: parseFloat(purchase.total_price)
+    }));
+  } catch (error) {
+    console.error('Failed to fetch purchases:', error);
+    throw error;
+  }
 }
 
 export async function getPurchaseById(id: number): Promise<Purchase | null> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is to fetch a specific purchase by ID with relations.
-    return null;
+  try {
+    const results = await db.select()
+      .from(purchasesTable)
+      .where(eq(purchasesTable.id, id))
+      .execute();
+
+    if (results.length === 0) {
+      return null;
+    }
+
+    const purchase = results[0];
+    return {
+      ...purchase,
+      unit_price: parseFloat(purchase.unit_price),
+      total_price: parseFloat(purchase.total_price)
+    };
+  } catch (error) {
+    console.error('Failed to fetch purchase by ID:', error);
+    throw error;
+  }
 }
 
 export async function getPurchasesByItem(itemId: number): Promise<Purchase[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is to fetch all purchases for a specific item.
-    return [];
+  try {
+    const results = await db.select()
+      .from(purchasesTable)
+      .where(eq(purchasesTable.item_id, itemId))
+      .execute();
+
+    return results.map(purchase => ({
+      ...purchase,
+      unit_price: parseFloat(purchase.unit_price),
+      total_price: parseFloat(purchase.total_price)
+    }));
+  } catch (error) {
+    console.error('Failed to fetch purchases by item:', error);
+    throw error;
+  }
 }
 
 export async function getPurchasesBySupplier(supplierId: number): Promise<Purchase[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is to fetch all purchases from a specific supplier.
-    return [];
+  try {
+    const results = await db.select()
+      .from(purchasesTable)
+      .where(eq(purchasesTable.supplier_id, supplierId))
+      .execute();
+
+    return results.map(purchase => ({
+      ...purchase,
+      unit_price: parseFloat(purchase.unit_price),
+      total_price: parseFloat(purchase.total_price)
+    }));
+  } catch (error) {
+    console.error('Failed to fetch purchases by supplier:', error);
+    throw error;
+  }
 }
 
 export async function createPurchase(input: CreatePurchaseInput): Promise<Purchase> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is to create a new purchase record:
-    // 1. Calculate total_price from quantity * unit_price
-    // 2. Persist the purchase in the database
-    // 3. Update inventory item quantity if needed
+  try {
+    // Calculate total price
     const totalPrice = input.quantity * input.unit_price;
-    
-    return {
-        id: 0,
+
+    // Verify item exists
+    const itemExists = await db.select()
+      .from(inventoryItemsTable)
+      .where(eq(inventoryItemsTable.id, input.item_id))
+      .execute();
+
+    if (itemExists.length === 0) {
+      throw new Error(`Inventory item with ID ${input.item_id} does not exist`);
+    }
+
+    // Verify supplier exists
+    const supplierExists = await db.select()
+      .from(suppliersTable)
+      .where(eq(suppliersTable.id, input.supplier_id))
+      .execute();
+
+    if (supplierExists.length === 0) {
+      throw new Error(`Supplier with ID ${input.supplier_id} does not exist`);
+    }
+
+    // Create purchase record
+    const results = await db.insert(purchasesTable)
+      .values({
         item_id: input.item_id,
         supplier_id: input.supplier_id,
         quantity: input.quantity,
-        unit_price: input.unit_price,
-        total_price: totalPrice,
+        unit_price: input.unit_price.toString(),
+        total_price: totalPrice.toString(),
         purchase_date: input.purchase_date,
-        notes: input.notes,
-        created_at: new Date(),
-        updated_at: new Date()
+        notes: input.notes
+      })
+      .returning()
+      .execute();
+
+    const purchase = results[0];
+    return {
+      ...purchase,
+      unit_price: parseFloat(purchase.unit_price),
+      total_price: parseFloat(purchase.total_price)
     };
+  } catch (error) {
+    console.error('Failed to create purchase:', error);
+    throw error;
+  }
 }
 
 export async function updatePurchase(input: UpdatePurchaseInput): Promise<Purchase> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is to update an existing purchase record and recalculate total_price if needed.
-    return {
-        id: input.id,
-        item_id: input.item_id || 1,
-        supplier_id: input.supplier_id || 1,
-        quantity: input.quantity || 1,
-        unit_price: input.unit_price || 0,
-        total_price: (input.quantity || 1) * (input.unit_price || 0),
-        purchase_date: input.purchase_date || new Date(),
-        notes: input.notes || null,
-        created_at: new Date(),
-        updated_at: new Date()
+  try {
+    // Check if purchase exists
+    const existing = await db.select()
+      .from(purchasesTable)
+      .where(eq(purchasesTable.id, input.id))
+      .execute();
+
+    if (existing.length === 0) {
+      throw new Error(`Purchase with ID ${input.id} does not exist`);
+    }
+
+    const currentPurchase = existing[0];
+
+    // Verify item exists if item_id is being updated
+    if (input.item_id !== undefined) {
+      const itemExists = await db.select()
+        .from(inventoryItemsTable)
+        .where(eq(inventoryItemsTable.id, input.item_id))
+        .execute();
+
+      if (itemExists.length === 0) {
+        throw new Error(`Inventory item with ID ${input.item_id} does not exist`);
+      }
+    }
+
+    // Verify supplier exists if supplier_id is being updated
+    if (input.supplier_id !== undefined) {
+      const supplierExists = await db.select()
+        .from(suppliersTable)
+        .where(eq(suppliersTable.id, input.supplier_id))
+        .execute();
+
+      if (supplierExists.length === 0) {
+        throw new Error(`Supplier with ID ${input.supplier_id} does not exist`);
+      }
+    }
+
+    // Calculate new values
+    const quantity = input.quantity !== undefined ? input.quantity : currentPurchase.quantity;
+    const unitPrice = input.unit_price !== undefined ? input.unit_price : parseFloat(currentPurchase.unit_price);
+    const totalPrice = quantity * unitPrice;
+
+    // Prepare update values
+    const updateValues: any = {
+      updated_at: new Date()
     };
+
+    if (input.item_id !== undefined) updateValues.item_id = input.item_id;
+    if (input.supplier_id !== undefined) updateValues.supplier_id = input.supplier_id;
+    if (input.quantity !== undefined) updateValues.quantity = input.quantity;
+    if (input.unit_price !== undefined) updateValues.unit_price = input.unit_price.toString();
+    if (input.purchase_date !== undefined) updateValues.purchase_date = input.purchase_date;
+    if (input.notes !== undefined) updateValues.notes = input.notes;
+
+    // Always update total_price if quantity or unit_price changed
+    if (input.quantity !== undefined || input.unit_price !== undefined) {
+      updateValues.total_price = totalPrice.toString();
+    }
+
+    // Update purchase record
+    const results = await db.update(purchasesTable)
+      .set(updateValues)
+      .where(eq(purchasesTable.id, input.id))
+      .returning()
+      .execute();
+
+    const purchase = results[0];
+    return {
+      ...purchase,
+      unit_price: parseFloat(purchase.unit_price),
+      total_price: parseFloat(purchase.total_price)
+    };
+  } catch (error) {
+    console.error('Failed to update purchase:', error);
+    throw error;
+  }
 }
 
 export async function deletePurchase(id: number): Promise<boolean> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is to delete a purchase from the database.
+  try {
+    // Check if purchase exists
+    const existing = await db.select()
+      .from(purchasesTable)
+      .where(eq(purchasesTable.id, id))
+      .execute();
+
+    if (existing.length === 0) {
+      return false;
+    }
+
+    // Delete purchase record
+    await db.delete(purchasesTable)
+      .where(eq(purchasesTable.id, id))
+      .execute();
+
     return true;
+  } catch (error) {
+    console.error('Failed to delete purchase:', error);
+    throw error;
+  }
 }

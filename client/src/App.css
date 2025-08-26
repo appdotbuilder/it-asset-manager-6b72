@@ -1,131 +1,378 @@
+/* Windows ME/98 Theme Variables */
 :root {
-  --background: #fff;
-  --text: #000;
-  --text-secondary: #666;
-  --spinner-border: #000;
-  --spinner-border-top: transparent;
-  --dot-color: #000;
-  --grid-color: rgba(0,0,0,0.05);
-  --gradient-color: rgba(0,0,0,0.03);
+  --win98-bg: #c0c0c0;
+  --win98-bg-light: #dfdfdf;
+  --win98-bg-dark: #808080;
+  --win98-border-light: #ffffff;
+  --win98-border-dark: #404040;
+  --win98-blue: #0080c0;
+  --win98-blue-dark: #004080;
+  --win98-text: #000000;
+  --win98-text-disabled: #808080;
+  --win98-green: #008000;
+  --win98-red: #c00000;
+  --win98-yellow: #ffff00;
+  --win98-purple: #800080;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-      --background: #000;
-      --text: #fff;
-      --text-secondary: #888;
-      --spinner-border: #fff;
-      --spinner-border-top: transparent;
-      --dot-color: #fff;
-      --grid-color: rgba(255,255,255,0.05);
-      --gradient-color: rgba(255,255,255,0.03);
-  }
-}
+/* Global Styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  min-height: 100vh;
+  font-family: "MS Sans Serif", sans-serif;
+  font-size: 11px;
+  background: var(--win98-bg);
+  color: var(--win98-text);
+  overflow: hidden;
+}
+
+/* Main Application Layout */
+.app-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--win98-bg);
+}
+
+/* Titlebar */
+.titlebar {
+  height: 24px;
+  background: linear-gradient(90deg, var(--win98-blue) 0%, var(--win98-blue-dark) 100%);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--win98-border-dark);
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.titlebar-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.titlebar-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.titlebar-button {
+  width: 16px;
+  height: 14px;
+  background: var(--win98-bg);
+  border: 1px outset var(--win98-bg);
+  color: var(--win98-text);
+  font-size: 8px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--background);
-  color: var(--text);
-  padding: 20px;
-  line-height: 1.5;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
-.container {
-  text-align: center;
-  max-width: 600px;
+
+.titlebar-button:active {
+  border: 1px inset var(--win98-bg);
 }
-h1.title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  letter-spacing: -0.02em;
-}
-p.description {
-  font-size: 1.125rem;
-  color: var(--text-secondary);
-  margin-bottom: 2rem;
-}
-.spinner {
-  width: 40px;
-  height: 40px;
-  margin: 2rem auto;
-  position: relative;
-}
-.spinner::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 2px solid var(--spinner-border);
-  border-top-color: var(--spinner-border-top);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-.dots {
+
+/* App Content Layout */
+.app-content {
+  flex: 1;
   display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 2rem;
-}
-.dot {
-  width: 4px;
-  height: 4px;
-  background: var(--dot-color);
-  border-radius: 50%;
-  animation: fade 1.4s infinite ease-in-out;
-}
-.dot:nth-child(1) { animation-delay: -0.32s; }
-.dot:nth-child(2) { animation-delay: -0.16s; }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-@keyframes fade {
-  0%, 80%, 100% { opacity: 0; }
-  40% { opacity: 1; }
-}
-.grid {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background-image: 
-      linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
-  background-size: 24px 24px;
-  transition: background-image 0.3s ease;
-}
-.gradient {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -2;
-  background: radial-gradient(circle at center, var(--gradient-color) 0%, transparent 50%);
-  transition: background 0.3s ease;
+  background: var(--win98-bg);
 }
 
-.footer {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background: var(--win98-bg);
+  border-right: 2px inset var(--win98-bg);
+  padding: 8px;
+  overflow-y: auto;
 }
 
-.footer-link {
-  color: var(--text);
-  text-decoration: none;
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  font-size: 11px;
+  color: var(--win98-text);
+}
+
+.sidebar-item:hover {
+  background: var(--win98-bg-light);
+  border: 1px outset var(--win98-bg);
+}
+
+.sidebar-item.active {
+  background: var(--win98-blue);
+  color: white;
+  border: 1px inset var(--win98-bg);
+}
+
+.sidebar-item-icon {
+  font-size: 16px;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.content-window {
+  height: 100%;
+  background: var(--win98-bg-light);
+  border: 2px inset var(--win98-bg);
+  padding: 8px;
+  overflow: auto;
+}
+
+/* Windows 98 Style Components */
+.win98-button {
+  background: var(--win98-bg);
+  border: 2px outset var(--win98-bg);
+  color: var(--win98-text);
+  font-family: inherit;
+  font-size: 11px;
+  padding: 4px 16px;
+  cursor: pointer;
+  min-width: 75px;
+}
+
+.win98-button:hover {
+  background: var(--win98-bg-light);
+}
+
+.win98-button:active {
+  border: 2px inset var(--win98-bg);
+}
+
+.win98-button:disabled {
+  color: var(--win98-text-disabled);
+  cursor: not-allowed;
+}
+
+.win98-button-primary {
+  background: var(--win98-blue);
+  color: white;
+  border: 2px outset var(--win98-blue);
+}
+
+.win98-button-primary:hover {
+  background: #0090d0;
+}
+
+.win98-button-primary:active {
+  border: 2px inset var(--win98-blue);
+}
+
+.win98-input {
+  background: white;
+  border: 2px inset var(--win98-bg);
+  color: var(--win98-text);
+  font-family: inherit;
+  font-size: 11px;
+  padding: 4px;
+  outline: none;
+}
+
+.win98-input:focus {
+  outline: 1px dotted var(--win98-text);
+  outline-offset: -3px;
+}
+
+.win98-select {
+  background: white;
+  border: 2px inset var(--win98-bg);
+  color: var(--win98-text);
+  font-family: inherit;
+  font-size: 11px;
+  padding: 4px;
+  outline: none;
+}
+
+.win98-textarea {
+  background: white;
+  border: 2px inset var(--win98-bg);
+  color: var(--win98-text);
+  font-family: inherit;
+  font-size: 11px;
+  padding: 4px;
+  resize: vertical;
+  outline: none;
+}
+
+.win98-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border: 2px inset var(--win98-bg);
+}
+
+.win98-table th {
+  background: var(--win98-bg);
+  border: 1px outset var(--win98-bg);
+  padding: 4px 8px;
   font-weight: bold;
+  text-align: left;
+}
+
+.win98-table td {
+  border: 1px solid var(--win98-border-dark);
+  padding: 4px 8px;
+}
+
+.win98-table tr:nth-child(even) {
+  background: #f8f8f8;
+}
+
+.win98-table tr:hover {
+  background: var(--win98-blue);
+  color: white;
+}
+
+/* Window Groups */
+.win98-group {
+  border: 2px inset var(--win98-bg);
+  margin: 8px 0;
+  padding: 8px;
+  background: var(--win98-bg-light);
+}
+
+.win98-group-title {
+  background: var(--win98-bg);
+  padding: 2px 8px;
+  margin: -8px -8px 8px -8px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--win98-border-dark);
+}
+
+/* Tabs */
+.win98-tabs {
+  margin-bottom: 8px;
+}
+
+.win98-tab-list {
+  display: flex;
+  border-bottom: 2px solid var(--win98-border-dark);
+}
+
+.win98-tab {
+  background: var(--win98-bg);
+  border: 2px outset var(--win98-bg);
+  border-bottom: none;
+  padding: 4px 16px;
+  cursor: pointer;
+  font-size: 11px;
+  margin-right: 2px;
+}
+
+.win98-tab:hover {
+  background: var(--win98-bg-light);
+}
+
+.win98-tab.active {
+  background: var(--win98-bg-light);
+  border-bottom: 2px solid var(--win98-bg-light);
+  margin-bottom: -2px;
+}
+
+.win98-tab-content {
+  background: var(--win98-bg-light);
+  border: 2px inset var(--win98-bg);
+  padding: 8px;
+}
+
+/* Form Layouts */
+.form-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.form-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.form-row label {
+  min-width: 100px;
+  font-weight: bold;
+}
+
+/* Status indicators */
+.status-excellent { color: var(--win98-green); font-weight: bold; }
+.status-good { color: var(--win98-blue); font-weight: bold; }
+.status-fair { color: var(--win98-yellow); background: black; font-weight: bold; }
+.status-poor { color: orange; font-weight: bold; }
+.status-damaged { color: var(--win98-red); font-weight: bold; }
+
+.status-pending { color: orange; font-weight: bold; }
+.status-in_transit { color: var(--win98-blue); font-weight: bold; }
+.status-completed { color: var(--win98-green); font-weight: bold; }
+.status-cancelled { color: var(--win98-red); font-weight: bold; }
+
+/* Statistics Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: white;
+  border: 2px inset var(--win98-bg);
+  padding: 12px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--win98-blue);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--win98-text);
+  margin-top: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 160px;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .form-row label {
+    min-width: auto;
+  }
 }
