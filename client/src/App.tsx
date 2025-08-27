@@ -1,6 +1,7 @@
 import './App.css';
 import { useState } from 'react';
 import { AuthProvider, useAuth } from '@/components/AuthContext';
+import { LanguageProvider, useLanguage } from '@/components/LanguageContext';
 import { Login } from '@/components/Login';
 import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
@@ -12,20 +13,21 @@ import { LocationHistory } from '@/components/LocationHistory';
 import { Reports } from '@/components/Reports';
 import { Settings } from '@/components/Settings';
 
-// Navigation items
-const navigationItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
-  { id: 'inventory', label: 'Inventaris', icon: '📦' },
-  { id: 'purchases', label: 'Pembelian', icon: '🛒' },
-  { id: 'locations', label: 'Lokasi', icon: '📍' },
-  { id: 'location-history', label: 'Riwayat Lokasi', icon: '📋' },
-  { id: 'reports', label: 'Laporan', icon: '📊' },
-  { id: 'settings', label: 'Pengaturan', icon: '⚙️' },
-];
-
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
+  const { t } = useLanguage();
   const [activeView, setActiveView] = useState<string>('dashboard');
+
+  // Navigation items with translations
+  const navigationItems = [
+    { id: 'dashboard', label: t('navigation.dashboard'), icon: '🏠' },
+    { id: 'inventory', label: t('navigation.inventory'), icon: '📦' },
+    { id: 'purchases', label: t('navigation.purchases'), icon: '🛒' },
+    { id: 'locations', label: t('navigation.locations'), icon: '📍' },
+    { id: 'location-history', label: t('navigation.locationHistory'), icon: '📋' },
+    { id: 'reports', label: t('navigation.reports'), icon: '📊' },
+    { id: 'settings', label: t('navigation.settings'), icon: '⚙️' },
+  ];
 
   const renderContent = () => {
     switch (activeView) {
@@ -52,11 +54,11 @@ function AppContent() {
     return (
       <div className="app-container">
         <div className="titlebar">
-          <div className="titlebar-text">📟 IT Inventory Management System</div>
+          <div className="titlebar-text">📟 {t('app.title')}</div>
         </div>
         <div className="loading-screen">
           <div className="loading-content">
-            <div>🔄 Loading...</div>
+            <div>🔄 {t('app.loading')}</div>
           </div>
         </div>
       </div>
@@ -90,9 +92,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
 

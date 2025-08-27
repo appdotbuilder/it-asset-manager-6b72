@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { trpc } from '@/utils/trpc';
 import { UserManagement } from './UserManagement';
 import { useAuth } from './AuthContext';
+import { useLanguage } from './LanguageContext';
 import type { 
   Category, 
   CreateCategoryInput, 
@@ -13,6 +14,7 @@ import type {
 
 export function Settings() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<string>('categories');
   const [categories, setCategories] = useState<Category[]>([]);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -91,7 +93,7 @@ export function Settings() {
   };
 
   const handleCategoryDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
+    if (!confirm(t('settings.confirmDelete'))) return;
     
     try {
       await trpc.categories.delete.mutate({ id });
@@ -148,7 +150,7 @@ export function Settings() {
   };
 
   const handleSupplierDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this supplier?')) return;
+    if (!confirm(t('settings.confirmDelete'))) return;
     
     try {
       await trpc.suppliers.delete.mutate({ id });
@@ -429,9 +431,9 @@ export function Settings() {
   if (loading && categories.length === 0 && suppliers.length === 0) {
     return (
       <div className="win98-group">
-        <div className="win98-group-title">⚙️ Settings</div>
+        <div className="win98-group-title">⚙️ {t('settings.title')}</div>
         <div style={{ textAlign: 'center', padding: '20px' }}>
-          Loading settings data...
+          {t('settings.loading')}
         </div>
       </div>
     );
@@ -440,7 +442,7 @@ export function Settings() {
   return (
     <div>
       <div className="win98-group">
-        <div className="win98-group-title">⚙️ Settings</div>
+        <div className="win98-group-title">⚙️ {t('settings.title')}</div>
         
         <div className="win98-tabs">
           <div className="win98-tab-list">
@@ -448,20 +450,20 @@ export function Settings() {
               className={`win98-tab ${activeTab === 'categories' ? 'active' : ''}`}
               onClick={() => setActiveTab('categories')}
             >
-              📂 Categories
+              📂 {t('settings.categories')}
             </button>
             <button 
               className={`win98-tab ${activeTab === 'suppliers' ? 'active' : ''}`}
               onClick={() => setActiveTab('suppliers')}
             >
-              🏢 Suppliers
+              🏢 {t('settings.suppliers')}
             </button>
             {user?.role === 'admin' && (
               <button 
                 className={`win98-tab ${activeTab === 'users' ? 'active' : ''}`}
                 onClick={() => setActiveTab('users')}
               >
-                👥 Manajemen Pengguna
+                👥 {t('settings.userManagement')}
               </button>
             )}
           </div>

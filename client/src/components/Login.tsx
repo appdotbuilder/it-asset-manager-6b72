@@ -5,9 +5,11 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from './AuthContext';
+import { useLanguage } from './LanguageContext';
 
 export function Login() {
   const { login, isLoading } = useAuth();
+  const { t } = useLanguage();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -23,7 +25,7 @@ export function Login() {
 
     const success = await login(username, password);
     if (!success) {
-      setError('Invalid username or password');
+      setError(t('auth.invalidCredentials'));
     }
   };
 
@@ -32,7 +34,7 @@ export function Login() {
       <div className="login-background">
         <div className="login-window">
           <div className="titlebar">
-            <div className="titlebar-text">🔐 Login - IT Inventory Management System</div>
+            <div className="titlebar-text">🔐 {t('auth.login')} - {t('app.title')}</div>
             <div className="titlebar-buttons">
               <button className="titlebar-button">_</button>
               <button className="titlebar-button">□</button>
@@ -45,7 +47,7 @@ export function Login() {
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl">🏢 TotalindO</CardTitle>
                 <CardDescription>
-                  IT Inventory Management System
+                  {t('app.title')}
                   <br />
                   Please log in to continue
                 </CardDescription>
@@ -53,26 +55,26 @@ export function Login() {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="username">Username</Label>
+                    <Label htmlFor="username">{t('auth.username')}</Label>
                     <Input
                       id="username"
                       type="text"
                       value={username}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
-                      placeholder="Enter your username"
+                      placeholder={`Enter your ${t('auth.username').toLowerCase()}`}
                       disabled={isLoading}
                       required
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t('auth.password')}</Label>
                     <Input
                       id="password"
                       type="password"
                       value={password}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
+                      placeholder={`Enter your ${t('auth.password').toLowerCase()}`}
                       disabled={isLoading}
                       required
                     />
@@ -91,7 +93,7 @@ export function Login() {
                     className="w-full"
                     disabled={isLoading}
                   >
-                    {isLoading ? 'Logging in...' : 'Login'}
+                    {isLoading ? `${t('auth.login')}...` : t('auth.loginButton')}
                   </Button>
                 </form>
 
