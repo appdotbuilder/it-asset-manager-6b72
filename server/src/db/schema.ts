@@ -1,9 +1,29 @@
-import { serial, text, pgTable, timestamp, numeric, integer, pgEnum } from 'drizzle-orm/pg-core';
+import { serial, text, pgTable, timestamp, numeric, integer, pgEnum, boolean } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // Enums
 export const itemConditionEnum = pgEnum('item_condition', ['excellent', 'good', 'fair', 'poor', 'damaged']);
 export const transferStatusEnum = pgEnum('transfer_status', ['pending', 'in_transit', 'completed', 'cancelled']);
+export const userRoleEnum = pgEnum('user_role', ['admin', 'user']);
+
+// Users table
+export const usersTable = pgTable('users', {
+  id: serial('id').primaryKey(),
+  username: text('username').notNull().unique(),
+  password_hash: text('password_hash').notNull(),
+  role: userRoleEnum('role').notNull().default('user'),
+  is_active: boolean('is_active').notNull().default(true),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Sessions table
+export const sessionsTable = pgTable('sessions', {
+  id: text('id').primaryKey(),
+  user_id: integer('user_id').references(() => usersTable.id).notNull(),
+  expires_at: timestamp('expires_at').notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+});
 
 // Locations table
 export const locationsTable = pgTable('locations', {
@@ -81,6 +101,17 @@ export const locationHistoryTable = pgTable('location_history', {
 });
 
 // Relations
+export const usersRelations = relations(usersTable, ({ many }) => ({
+  sessions: many(sessionsTable),
+}));
+
+export const sessionsRelations = relations(sessionsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [sessionsTable.user_id],
+    references: [usersTable.id],
+  }),
+}));
+
 export const locationsRelations = relations(locationsTable, ({ many }) => ({
   inventoryItems: many(inventoryItemsTable),
   historyFrom: many(locationHistoryTable, { relationName: 'fromLocation' }),
@@ -138,6 +169,8 @@ export const locationHistoryRelations = relations(locationHistoryTable, ({ one }
 
 // Export all tables for relation queries
 export const tables = {
+  users: usersTable,
+  sessions: sessionsTable,
   locations: locationsTable,
   categories: categoriesTable,
   suppliers: suppliersTable,
@@ -147,6 +180,12 @@ export const tables = {
 };
 
 // TypeScript types for the table schemas
+export type User = typeof usersTable.$inferSelect;
+export type NewUser = typeof usersTable.$inferInsert;
+
+export type Session = typeof sessionsTable.$inferSelect;
+export type NewSession = typeof sessionsTable.$inferInsert;
+
 export type Location = typeof locationsTable.$inferSelect;
 export type NewLocation = typeof locationsTable.$inferInsert;
 

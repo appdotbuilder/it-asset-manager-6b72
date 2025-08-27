@@ -1,5 +1,8 @@
 import './App.css';
 import { useState } from 'react';
+import { AuthProvider, useAuth } from '@/components/AuthContext';
+import { Login } from '@/components/Login';
+import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
 import { Dashboard } from '@/components/Dashboard';
 import { Inventory } from '@/components/Inventory';
@@ -20,7 +23,8 @@ const navigationItems = [
   { id: 'settings', label: 'Pengaturan', icon: '⚙️' },
 ];
 
-function App() {
+function AppContent() {
+  const { isAuthenticated, isLoading } = useAuth();
   const [activeView, setActiveView] = useState<string>('dashboard');
 
   const renderContent = () => {
@@ -44,16 +48,28 @@ function App() {
     }
   };
 
-  return (
-    <div className="app-container">
-      <div className="titlebar">
-        <div className="titlebar-text">📟 IT Inventory Management System</div>
-        <div className="titlebar-buttons">
-          <button className="titlebar-button">_</button>
-          <button className="titlebar-button">□</button>
-          <button className="titlebar-button">×</button>
+  if (isLoading) {
+    return (
+      <div className="app-container">
+        <div className="titlebar">
+          <div className="titlebar-text">📟 IT Inventory Management System</div>
+        </div>
+        <div className="loading-screen">
+          <div className="loading-content">
+            <div>🔄 Loading...</div>
+          </div>
         </div>
       </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Login />;
+  }
+
+  return (
+    <div className="app-container">
+      <Header />
       
       <div className="app-content">
         <Sidebar
@@ -69,6 +85,14 @@ function App() {
         </main>
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

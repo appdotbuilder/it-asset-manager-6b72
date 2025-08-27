@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { trpc } from '@/utils/trpc';
+import { UserManagement } from './UserManagement';
+import { useAuth } from './AuthContext';
 import type { 
   Category, 
   CreateCategoryInput, 
@@ -10,6 +12,7 @@ import type {
 } from '../../../server/src/schema';
 
 export function Settings() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('categories');
   const [categories, setCategories] = useState<Category[]>([]);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -417,6 +420,12 @@ export function Settings() {
     </div>
   );
 
+  const renderUserManagementTab = () => (
+    <div className="win98-tab-content">
+      <UserManagement />
+    </div>
+  );
+
   if (loading && categories.length === 0 && suppliers.length === 0) {
     return (
       <div className="win98-group">
@@ -447,10 +456,19 @@ export function Settings() {
             >
               🏢 Suppliers
             </button>
+            {user?.role === 'admin' && (
+              <button 
+                className={`win98-tab ${activeTab === 'users' ? 'active' : ''}`}
+                onClick={() => setActiveTab('users')}
+              >
+                👥 Manajemen Pengguna
+              </button>
+            )}
           </div>
 
           {activeTab === 'categories' && renderCategoriesTab()}
           {activeTab === 'suppliers' && renderSuppliersTab()}
+          {activeTab === 'users' && user?.role === 'admin' && renderUserManagementTab()}
         </div>
       </div>
     </div>

@@ -3,6 +3,52 @@ import { z } from 'zod';
 // Enums
 export const itemConditionEnum = z.enum(['excellent', 'good', 'fair', 'poor', 'damaged']);
 export const transferStatusEnum = z.enum(['pending', 'in_transit', 'completed', 'cancelled']);
+export const userRoleEnum = z.enum(['admin', 'user']);
+
+// Users schema
+export const userSchema = z.object({
+  id: z.number(),
+  username: z.string(),
+  role: userRoleEnum,
+  is_active: z.boolean(),
+  created_at: z.coerce.date(),
+  updated_at: z.coerce.date()
+});
+
+export type User = z.infer<typeof userSchema>;
+
+export const loginInputSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required")
+});
+
+export type LoginInput = z.infer<typeof loginInputSchema>;
+
+export const loginResponseSchema = z.object({
+  success: z.boolean(),
+  sessionId: z.string().optional(),
+  user: userSchema.optional(),
+  message: z.string().optional()
+});
+
+export type LoginResponse = z.infer<typeof loginResponseSchema>;
+
+export const createUserInputSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  role: userRoleEnum.default('user')
+});
+
+export type CreateUserInput = z.infer<typeof createUserInputSchema>;
+
+export const sessionSchema = z.object({
+  id: z.string(),
+  user_id: z.number(),
+  expires_at: z.coerce.date(),
+  created_at: z.coerce.date()
+});
+
+export type Session = z.infer<typeof sessionSchema>;
 
 // Locations schema
 export const locationSchema = z.object({

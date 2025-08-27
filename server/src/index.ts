@@ -7,6 +7,8 @@ import { z } from 'zod';
 
 // Import schemas
 import {
+  loginInputSchema,
+  createUserInputSchema,
   createLocationInputSchema,
   updateLocationInputSchema,
   createCategoryInputSchema,
@@ -26,6 +28,8 @@ import {
 } from './schema';
 
 // Import handlers
+import { login, logout, validateSession, initializeDefaultUser } from './handlers/auth';
+import { getUsers, getUserById, createUser, deleteUser } from './handlers/users';
 import { getDashboardStats } from './handlers/dashboard';
 import {
   getLocations,
@@ -93,6 +97,33 @@ const appRouter = router({
   // Health check
   healthcheck: publicProcedure.query(() => {
     return { status: 'ok', timestamp: new Date().toISOString() };
+  }),
+
+  // Authentication
+  auth: router({
+    login: publicProcedure
+      .input(loginInputSchema)
+      .mutation(({ input }) => login(input)),
+    logout: publicProcedure
+      .input(z.object({ sessionId: z.string() }))
+      .mutation(({ input }) => logout(input.sessionId)),
+    validateSession: publicProcedure
+      .input(z.object({ sessionId: z.string() }))
+      .query(({ input }) => validateSession(input.sessionId)),
+  }),
+
+  // User Management
+  users: router({
+    getAll: publicProcedure.query(() => getUsers()),
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(({ input }) => getUserById(input.id)),
+    create: publicProcedure
+      .input(createUserInputSchema)
+      .mutation(({ input }) => createUser(input)),
+    delete: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(({ input }) => deleteUser(input.id)),
   }),
 
   // Dashboard
@@ -240,6 +271,9 @@ const appRouter = router({
 export type AppRouter = typeof appRouter;
 
 async function start() {
+  // Initialize default admin user on startup
+  await initializeDefaultUser();
+  
   const port = process.env['SERVER_PORT'] || 2022;
   const server = createHTTPServer({
     middleware: (req, res, next) => {
