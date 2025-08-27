@@ -22,12 +22,17 @@
   box-sizing: border-box;
 }
 
+html, body, #root {
+  height: 100%; /* Ensure full height for responsive containers */
+  width: 100%;
+  overflow: hidden; /* Prevent global scrollbars unless explicitly needed */
+}
+
 body {
   font-family: "MS Sans Serif", sans-serif;
   font-size: 11px;
   background: var(--win98-bg);
   color: var(--win98-text);
-  overflow: hidden;
 }
 
 /* Main Application Layout */
@@ -50,12 +55,15 @@ body {
   border-bottom: 1px solid var(--win98-border-dark);
   font-weight: bold;
   font-size: 11px;
+  flex-shrink: 0; /* Prevent titlebar from shrinking */
 }
 
 .titlebar-text {
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .titlebar-info {
@@ -63,11 +71,14 @@ body {
   align-items: center;
   gap: 8px;
   font-size: 10px;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  justify-content: flex-end;
 }
 
 .language-selector {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .user-info {
@@ -75,11 +86,14 @@ body {
   align-items: center;
   gap: 4px;
   color: white;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .titlebar-buttons {
   display: flex;
   gap: 2px;
+  flex-shrink: 0;
 }
 
 .titlebar-button {
@@ -93,6 +107,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .titlebar-button:active {
@@ -107,18 +122,21 @@ body {
 
 /* App Content Layout */
 .app-content {
-  flex: 1;
+  flex: 1; /* Take remaining vertical space */
   display: flex;
+  flex-direction: row; /* Default desktop layout */
   background: var(--win98-bg);
+  overflow: hidden; /* Ensure content within is scrollable, not the whole app-content */
 }
 
 /* Sidebar */
 .sidebar {
-  width: 200px;
+  width: 200px; /* Default desktop width */
   background: var(--win98-bg);
   border-right: 2px inset var(--win98-bg);
   padding: 8px;
   overflow-y: auto;
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
 }
 
 .sidebar-item {
@@ -134,6 +152,7 @@ body {
   text-align: left;
   font-size: 11px;
   color: var(--win98-text);
+  white-space: nowrap; /* Prevent text wrapping in sidebar items */
 }
 
 .sidebar-item:hover {
@@ -149,21 +168,24 @@ body {
 
 .sidebar-item-icon {
   font-size: 16px;
+  flex-shrink: 0;
 }
 
 /* Main Content */
 .main-content {
-  flex: 1;
+  flex: 1; /* Take remaining horizontal space */
   padding: 8px;
-  overflow: hidden;
+  overflow: hidden; /* Hide scrollbars, content-window handles its own scroll */
+  display: flex;
+  flex-direction: column;
 }
 
 .content-window {
-  height: 100%;
+  height: 100%; /* Take full height of main-content */
   background: var(--win98-bg-light);
   border: 2px inset var(--win98-bg);
   padding: 8px;
-  overflow: auto;
+  overflow: auto; /* Allow content inside to scroll */
 }
 
 /* Windows 98 Style Components */
@@ -175,7 +197,9 @@ body {
   font-size: 11px;
   padding: 4px 16px;
   cursor: pointer;
-  min-width: 75px;
+  min-width: 75px; /* Keep minimal width for desktop, adjust for mobile */
+  white-space: nowrap; /* Prevent text wrapping */
+  flex-shrink: 0;
 }
 
 .win98-button:hover {
@@ -205,31 +229,8 @@ body {
   border: 2px inset var(--win98-blue);
 }
 
-.win98-input {
-  background: white;
-  border: 2px inset var(--win98-bg);
-  color: var(--win98-text);
-  font-family: inherit;
-  font-size: 11px;
-  padding: 4px;
-  outline: none;
-}
-
-.win98-input:focus {
-  outline: 1px dotted var(--win98-text);
-  outline-offset: -3px;
-}
-
-.win98-select {
-  background: white;
-  border: 2px inset var(--win98-bg);
-  color: var(--win98-text);
-  font-family: inherit;
-  font-size: 11px;
-  padding: 4px;
-  outline: none;
-}
-
+.win98-input,
+.win98-select,
 .win98-textarea {
   background: white;
   border: 2px inset var(--win98-bg);
@@ -237,8 +238,20 @@ body {
   font-family: inherit;
   font-size: 11px;
   padding: 4px;
-  resize: vertical;
   outline: none;
+  width: 100%; /* Make inputs fluid */
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.win98-input:focus,
+.win98-select:focus,
+.win98-textarea:focus {
+  outline: 1px dotted var(--win98-text);
+  outline-offset: -3px;
+}
+
+.win98-textarea {
+  resize: vertical;
 }
 
 .win98-table {
@@ -246,19 +259,21 @@ body {
   border-collapse: collapse;
   background: white;
   border: 2px inset var(--win98-bg);
+  font-size: 11px; /* Ensure table font size is consistent */
+}
+
+.win98-table th,
+.win98-table td {
+  border: 1px solid var(--win98-border-dark);
+  padding: 4px 8px;
+  text-align: left;
 }
 
 .win98-table th {
   background: var(--win98-bg);
   border: 1px outset var(--win98-bg);
-  padding: 4px 8px;
   font-weight: bold;
-  text-align: left;
-}
-
-.win98-table td {
-  border: 1px solid var(--win98-border-dark);
-  padding: 4px 8px;
+  white-space: nowrap; /* Prevent headers from wrapping too much */
 }
 
 .win98-table tr:nth-child(even) {
@@ -273,7 +288,7 @@ body {
 /* Window Groups */
 .win98-group {
   border: 2px inset var(--win98-bg);
-  margin: 8px 0;
+  margin-bottom: 8px; /* Consistent spacing */
   padding: 8px;
   background: var(--win98-bg-light);
 }
@@ -293,6 +308,7 @@ body {
 
 .win98-tab-list {
   display: flex;
+  flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
   border-bottom: 2px solid var(--win98-border-dark);
 }
 
@@ -304,6 +320,9 @@ body {
   cursor: pointer;
   font-size: 11px;
   margin-right: 2px;
+  flex-grow: 1; /* Allow tabs to grow and fill space */
+  text-align: center;
+  white-space: nowrap;
 }
 
 .win98-tab:hover {
@@ -325,7 +344,7 @@ body {
 /* Form Layouts */
 .form-grid {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr; /* Default desktop: label | input */
   gap: 8px;
   align-items: center;
   margin: 8px 0;
@@ -333,6 +352,7 @@ body {
 
 .form-row {
   display: flex;
+  flex-wrap: wrap; /* Allow buttons/elements to wrap */
   gap: 8px;
   align-items: center;
   margin: 8px 0;
@@ -341,6 +361,7 @@ body {
 .form-row label {
   min-width: 100px;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 /* Status indicators */
@@ -402,7 +423,8 @@ body {
 }
 
 .login-window {
-  width: 450px;
+  width: 450px; /* Fixed width for desktop login, adjust for mobile */
+  max-width: 90%; /* Ensure it's not too wide on very large screens */
   background: var(--win98-bg);
   border: 2px outset var(--win98-bg);
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
@@ -450,31 +472,35 @@ body {
 
 /* Responsive Design */
 
-/* Mobile devices (portrait phones, less than 576px) */
-@media (max-width: 575px) {
+/* Mobile devices (portrait phones, less than 768px) */
+@media (max-width: 767px) {
   .app-content {
-    flex-direction: column;
+    flex-direction: column; /* Stack sidebar and main content vertically */
   }
   
   .sidebar {
-    width: 100%;
+    width: 100%; /* Full width for sidebar on mobile */
     height: auto;
-    max-height: 150px;
+    max-height: 120px; /* Limit height of sidebar on mobile */
     padding: 4px;
     border-right: none;
     border-bottom: 2px inset var(--win98-bg);
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Allow sidebar items to wrap */
     gap: 2px;
+    justify-content: center; /* Center items if they don't fill the width */
   }
   
   .sidebar-item {
-    flex: 1;
-    min-width: calc(50% - 2px);
+    flex: 1 1 auto; /* Allow items to grow and shrink, but retain content */
+    min-width: calc(33% - 2px); /* At least 3 items per row on smaller screens */
+    max-width: calc(50% - 2px); /* Up to 2 items per row on very small screens */
     padding: 4px 6px;
     font-size: 10px;
     justify-content: center;
     text-align: center;
+    white-space: normal; /* Allow text to wrap if necessary */
+    min-height: 36px; /* Ensure touch target size */
   }
   
   .sidebar-item-icon {
@@ -487,15 +513,17 @@ body {
   
   .content-window {
     padding: 4px;
+    height: auto; /* Allow content to dictate height */
+    min-height: calc(100vh - 24px - 120px - 16px); /* Roughly viewport height - header - sidebar - padding */
   }
   
   .form-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Stack form labels and inputs vertically */
     gap: 4px;
   }
   
   .form-row {
-    flex-direction: column;
+    flex-direction: column; /* Stack form buttons vertically */
     align-items: stretch;
     gap: 4px;
     margin: 4px 0;
@@ -504,20 +532,58 @@ body {
   .form-row label {
     min-width: auto;
     font-size: 10px;
+    text-align: left;
   }
   
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Stack stat cards vertically */
     gap: 4px;
   }
   
   .win98-table {
     font-size: 10px;
+    display: block; /* Enable horizontal scrolling for tables */
+    overflow-x: auto;
+    white-space: nowrap; /* Prevent cells from wrapping within the table */
+  }
+
+  .win98-table thead, .win98-table tbody, .win98-table th, .win98-table td, .win98-table tr {
+    display: block; /* For better mobile table readability */
   }
   
-  .win98-table th,
+  .win98-table th {
+    position: sticky;
+    top: 0;
+    background: var(--win98-bg);
+    z-index: 1;
+  }
+
   .win98-table td {
-    padding: 2px 4px;
+    border-bottom: 1px solid var(--win98-border-dark);
+    margin-bottom: -1px; /* collapse double borders */
+  }
+
+  .win98-table tr {
+    margin-bottom: 8px;
+    border: 2px inset var(--win98-bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .win98-table tr:hover {
+    background: transparent; /* Reset hover background on stacked rows */
+    color: var(--win98-text);
+  }
+
+  .win98-table tr:hover td {
+    background: var(--win98-blue);
+    color: white;
+  }
+
+  .win98-button {
+    min-width: 100%; /* Full width buttons on mobile */
+    padding: 6px 12px;
+    font-size: 12px;
   }
   
   .login-window {
@@ -548,13 +614,21 @@ body {
   
   .user-info {
     font-size: 9px;
+    margin-left: 0;
+  }
+
+  .titlebar-info {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
   }
 }
 
-/* Mobile devices (landscape phones, 576px and up) */
-@media (min-width: 576px) and (max-width: 767px) {
+/* Tablets (768px and up, but before large desktop) */
+@media (min-width: 768px) and (max-width: 1023px) {
   .sidebar {
-    width: 140px;
+    width: 160px;
+    padding: 6px;
   }
   
   .sidebar-item {
@@ -586,7 +660,7 @@ body {
   }
   
   .login-window {
-    width: 85%;
+    width: 70%;
     max-width: 400px;
   }
   
@@ -595,76 +669,58 @@ body {
   }
 }
 
-/* Tablets (768px and up) */
-@media (min-width: 768px) and (max-width: 991px) {
-  .sidebar {
-    width: 180px;
-  }
-  
-  .form-grid {
-    grid-template-columns: auto 1fr;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  }
-  
-  .login-window {
-    width: 70%;
-    max-width: 450px;
-  }
-}
-
-/* Large tablets and small desktops (992px and up) */
-@media (min-width: 992px) and (max-width: 1199px) {
-  .sidebar {
-    width: 200px;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-}
-
-/* Large desktops (1200px and up) */
-@media (min-width: 1200px) {
+/* Large tablets and small desktops (1024px and up, adjusting for standard desktop break) */
+@media (min-width: 1024px) {
   .app-container {
-    max-width: 1400px;
+    max-width: 1400px; /* Max width for the entire app container */
     margin: 0 auto;
   }
-  
-  .stats-grid {
-    grid-template-columns: repeat(4, 1fr);
+  .app-content {
+    flex-direction: row; /* Ensure horizontal layout on desktop */
   }
-  
+  .sidebar {
+    width: 200px; /* Restore original desktop sidebar width */
+    max-height: none; /* Remove max-height for desktop */
+  }
   .content-window {
-    max-height: calc(100vh - 100px);
+    max-height: calc(100vh - 24px - 16px); /* Adjust height for main content on desktop */
   }
-}
-
-/* Touch device adjustments */
-@media (hover: none) and (pointer: coarse) {
-  .sidebar-item {
-    padding: 8px;
-    min-height: 40px;
+  .form-grid {
+    grid-template-columns: auto 1fr; /* Maintain label | input layout */
   }
-  
+  .form-row {
+    flex-direction: row; /* Maintain horizontal button layout */
+  }
   .win98-button {
-    padding: 8px 16px;
-    min-height: 36px;
+    min-width: 75px; /* Restore original min width */
+    width: auto;
   }
-  
-  .win98-input,
-  .win98-select,
-  .win98-textarea {
-    padding: 8px;
-    min-height: 36px;
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* More columns on wider screens */
   }
-  
-  .titlebar-button {
-    width: 20px;
-    height: 18px;
-    font-size: 10px;
+  .win98-table {
+    display: table; /* Restore default table display */
+    overflow-x: visible; /* Remove horizontal scrolling */
+    white-space: normal;
+  }
+  .win98-table thead, .win98-table tbody, .win98-table th, .win98-table td, .win98-table tr {
+    display: table-row-group;
+  }
+  .win98-table th, .win98-table td {
+    position: static; /* Remove sticky header */
+  }
+  .win98-table tr {
+    margin-bottom: 0;
+    border: none;
+    display: table-row;
+  }
+  .win98-table tr:hover {
+    background: var(--win98-blue);
+    color: white;
+  }
+  .win98-table tr:hover td {
+    background: none;
+    color: inherit;
   }
 }
 
