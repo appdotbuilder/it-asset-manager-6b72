@@ -448,27 +448,252 @@ body {
   margin-left: 24px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+/* Responsive Design */
+
+/* Mobile devices (portrait phones, less than 576px) */
+@media (max-width: 575px) {
+  .app-content {
+    flex-direction: column;
+  }
+  
   .sidebar {
-    width: 160px;
+    width: 100%;
+    height: auto;
+    max-height: 150px;
+    padding: 4px;
+    border-right: none;
+    border-bottom: 2px inset var(--win98-bg);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+  
+  .sidebar-item {
+    flex: 1;
+    min-width: calc(50% - 2px);
+    padding: 4px 6px;
+    font-size: 10px;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .sidebar-item-icon {
+    font-size: 14px;
+  }
+  
+  .main-content {
+    padding: 4px;
+  }
+  
+  .content-window {
+    padding: 4px;
   }
   
   .form-grid {
     grid-template-columns: 1fr;
+    gap: 4px;
   }
   
   .form-row {
     flex-direction: column;
     align-items: stretch;
+    gap: 4px;
+    margin: 4px 0;
   }
   
   .form-row label {
     min-width: auto;
+    font-size: 10px;
   }
-
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  
+  .win98-table {
+    font-size: 10px;
+  }
+  
+  .win98-table th,
+  .win98-table td {
+    padding: 2px 4px;
+  }
+  
   .login-window {
-    width: 90%;
+    width: 95%;
+    max-width: 350px;
+    margin: 8px;
+  }
+  
+  .login-content {
+    padding: 8px;
+  }
+  
+  .titlebar {
+    font-size: 10px;
+    height: 20px;
+    padding: 0 4px;
+  }
+  
+  .titlebar-buttons {
+    gap: 1px;
+  }
+  
+  .titlebar-button {
+    width: 14px;
+    height: 12px;
+    font-size: 7px;
+  }
+  
+  .user-info {
+    font-size: 9px;
+  }
+}
+
+/* Mobile devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .sidebar {
+    width: 140px;
+  }
+  
+  .sidebar-item {
+    padding: 5px 6px;
+    font-size: 10px;
+  }
+  
+  .main-content {
+    padding: 6px;
+  }
+  
+  .content-window {
+    padding: 6px;
+  }
+  
+  .form-grid {
+    grid-template-columns: auto 1fr;
+    gap: 6px;
+  }
+  
+  .form-row {
+    gap: 6px;
+    margin: 6px 0;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 6px;
+  }
+  
+  .login-window {
+    width: 85%;
     max-width: 400px;
+  }
+  
+  .login-content {
+    padding: 12px;
+  }
+}
+
+/* Tablets (768px and up) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .sidebar {
+    width: 180px;
+  }
+  
+  .form-grid {
+    grid-template-columns: auto 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  
+  .login-window {
+    width: 70%;
+    max-width: 450px;
+  }
+}
+
+/* Large tablets and small desktops (992px and up) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .sidebar {
+    width: 200px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* Large desktops (1200px and up) */
+@media (min-width: 1200px) {
+  .app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .content-window {
+    max-height: calc(100vh - 100px);
+  }
+}
+
+/* Touch device adjustments */
+@media (hover: none) and (pointer: coarse) {
+  .sidebar-item {
+    padding: 8px;
+    min-height: 40px;
+  }
+  
+  .win98-button {
+    padding: 8px 16px;
+    min-height: 36px;
+  }
+  
+  .win98-input,
+  .win98-select,
+  .win98-textarea {
+    padding: 8px;
+    min-height: 36px;
+  }
+  
+  .titlebar-button {
+    width: 20px;
+    height: 18px;
+    font-size: 10px;
+  }
+}
+
+/* Print media */
+@media print {
+  .titlebar,
+  .sidebar,
+  .titlebar-buttons {
+    display: none;
+  }
+  
+  .app-content {
+    flex-direction: column;
+  }
+  
+  .main-content {
+    width: 100%;
+    padding: 0;
+  }
+  
+  .content-window {
+    border: none;
+    background: white;
+    padding: 0;
+  }
+  
+  body {
+    background: white;
+    color: black;
+    font-size: 12px;
   }
 }

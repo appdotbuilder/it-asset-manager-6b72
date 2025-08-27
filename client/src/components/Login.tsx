@@ -45,7 +45,7 @@ export function Login() {
           <div className="login-content">
             <Card className="w-full max-w-md mx-auto">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl">🏢 TotalindO</CardTitle>
+                <CardTitle className="text-2xl">🏢 Totalindo</CardTitle>
                 <CardDescription>
                   {t('app.title')}
                   <br />
@@ -97,15 +97,7 @@ export function Login() {
                   </Button>
                 </form>
 
-                <div className="mt-4 text-sm text-gray-600 text-center">
-                  <div className="border-t pt-4">
-                    <strong>Default Admin Credentials:</strong>
-                    <br />
-                    Username: admin
-                    <br />
-                    Password: TotalindO465
-                  </div>
-                </div>
+
               </CardContent>
             </Card>
           </div>
